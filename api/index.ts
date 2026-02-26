@@ -20,7 +20,7 @@ const addLog = (msg: string) => {
   if (serverLogs.length > 100) serverLogs.shift();
   console.log(msg);
 };
-const MASTER_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzaXyWmFY8MOXaEC7L_xnixKhhfgXz4AD_k9-hEq-k82QQlrVbMajkB_1g43LyPl-bd/exec';
+const MASTER_SHEET_URL = 'https://script.google.com/macros/s/AKfycbz7saU0TU_QJR4h9yHtfLzDOEKGbBse2zvJoCLT6N-yn3Fwfw6YHEpUkwP2HJL9x2Qs/exec';
 
 // Estado global (Cargado síncronamente si existe el archivo)
 let state = {
