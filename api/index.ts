@@ -20,7 +20,7 @@ const addLog = (msg: string) => {
   if (serverLogs.length > 100) serverLogs.shift();
   console.log(msg);
 };
-const MASTER_SHEET_URL = 'https://script.google.com/macros/s/AKfycbz7saU0TU_QJR4h9yHtfLzDOEKGbBse2zvJoCLT6N-yn3Fwfw6YHEpUkwP2HJL9x2Qs/exec';
+const MASTER_SHEET_URL = 'https://script.google.com/macros/s/AKfycbySj40qtOz8ZuG2HD2VIdr85nU-K8PwqRTiZHsxTCUA7Fp3tFF-z0G4zhHbQVPfdLc-/exec';
 
 // Estado global (Cargado síncronamente si existe el archivo)
 let state = {
@@ -33,7 +33,8 @@ let state = {
   messageRoutings: [],
   googleSheetUrl: MASTER_SHEET_URL,
   lastSync: null,
-  syncStatus: 'initial'
+  syncStatus: 'initial',
+  lastError: null as string | null
 };
 
 if (fs.existsSync(DATA_FILE)) {
@@ -62,12 +63,22 @@ const syncFromSheets = async () => {
     addLog(`🔄 Sincronizando desde Google Sheets...`);
     const fetchUrl = `${MASTER_SHEET_URL}${MASTER_SHEET_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     const response = await fetch(fetchUrl, { signal: controller.signal });
     clearTimeout(timeoutId);
     
     if (response.ok) {
-      const remoteData = await response.json();
+      const text = await response.text();
+      let remoteData;
+      try {
+        remoteData = JSON.parse(text);
+      } catch (parseError) {
+        addLog(`❌ Error parseando JSON de Google Sheets. Inicio de respuesta: ${text.substring(0, 100)}`);
+        state.syncStatus = 'error';
+        state.lastError = `Respuesta no es JSON válido. Verifica que el Apps Script esté publicado como Aplicación Web y tenga acceso para 'Cualquiera'.`;
+        return;
+      }
+
       if (remoteData && remoteData.users && Array.isArray(remoteData.users)) {
         const processedUsers = remoteData.users.map((u: any) => {
           if (u.permissions && typeof u.permissions === 'string') {
@@ -75,14 +86,23 @@ const syncFromSheets = async () => {
           }
           return u;
         });
-        state = { ...state, ...remoteData, users: processedUsers, lastSync: new Date().toLocaleString(), syncStatus: 'success' };
+        state = { ...state, ...remoteData, users: processedUsers, lastSync: new Date().toLocaleString(), syncStatus: 'success', lastError: null };
         fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2));
         addLog(`✅ Sincronización exitosa. Usuarios: ${state.users.length}`);
+      } else {
+        addLog(`⚠️ Respuesta de Google Sheets no contiene el formato esperado (falta array 'users').`);
+        state.syncStatus = 'error';
+        state.lastError = "El Sheet no devolvió una lista de usuarios válida.";
       }
+    } else {
+      addLog(`❌ Google Sheets respondió con error: ${response.status}`);
+      state.syncStatus = 'error';
+      state.lastError = `Error de Google Sheets: ${response.status}`;
     }
   } catch (e: any) {
     addLog(`❌ Error en sincronización: ${e.message}`);
     state.syncStatus = 'error';
+    state.lastError = `Error de red: ${e.message}`;
   }
 };
 
@@ -177,10 +197,18 @@ apiRouter.get("/state", async (req, res) => {
 apiRouter.get("/sync", async (req, res) => {
   if (req.query.reset === 'true') {
     state.users = [];
+    state.lastSync = null;
+    state.syncStatus = 'initial';
+    state.lastError = null;
     if (fs.existsSync(DATA_FILE)) fs.unlinkSync(DATA_FILE);
   }
   await syncFromSheets();
-  res.json({ success: state.syncStatus === 'success', userCount: state.users.length, lastSync: state.lastSync });
+  res.json({ 
+    success: state.syncStatus === 'success', 
+    userCount: state.users.length, 
+    lastSync: state.lastSync,
+    error: state.lastError 
+  });
 });
 
 apiRouter.post("/state", async (req, res) => {

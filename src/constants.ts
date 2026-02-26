@@ -5,7 +5,7 @@
 
 export const GLOBAL_CONFIG = {
   // Pega aquí tu URL de Google Apps Script para que sea la misma en todos los dispositivos
-  MASTER_SHEET_URL: 'https://script.google.com/macros/s/AKfycbz7saU0TU_QJR4h9yHtfLzDOEKGbBse2zvJoCLT6N-yn3Fwfw6YHEpUkwP2HJL9x2Qs/exec', 
+  MASTER_SHEET_URL: 'https://script.google.com/macros/s/AKfycbySj40qtOz8ZuG2HD2VIdr85nU-K8PwqRTiZHsxTCUA7Fp3tFF-z0G4zhHbQVPfdLc-/exec', 
   
   // Nombre de la organización
   ORGANIZATION_NAME: 'KIOTO CORPORATE',

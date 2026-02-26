@@ -1,0 +1,82 @@
+{
+  "users": [
+    {
+      "name": "jorge",
+      "email": "hola@hotmail.com",
+      "phone": 6181533417,
+      "password": 123456,
+      "role": "SUPER_USER",
+      "assignedAreaId": "",
+      "id": "g8ds3d3me"
+    },
+    {
+      "name": "Jorge Villanueva",
+      "email": "mi_yorch@hotmail.com",
+      "phone": 6181533418,
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "SUPER_USER",
+      "assignedAreaId": "",
+      "id": "fcqmuzou1"
+    },
+    {
+      "name": "Test",
+      "email": "hoy@gmail.com",
+      "phone": 6181234567,
+      "password": 123456,
+      "role": "USER",
+      "assignedAreaId": "0n11dxwcw",
+      "id": "11ho9rnho"
+    }
+  ],
+  "areas": [
+    {
+      "id": 1,
+      "name": "Ingeniería",
+      "description": "Desarrollo de productos e I+D",
+      "budget": 150000,
+      "status": "active",
+      "createdAt": "2026-02-21T00:34:24.262Z"
+    },
+    {
+      "id": 2,
+      "name": "Marketing",
+      "description": "Conciencia de marca y crecimiento",
+      "budget": 85000,
+      "status": "active",
+      "createdAt": "2026-02-21T00:34:24.263Z"
+    },
+    {
+      "id": "0n11dxwcw",
+      "name": "Mantenimiento",
+      "description": "Mantenimiento",
+      "budget": 250000,
+      "status": "active",
+      "createdAt": "2026-02-21T02:12:32.467Z"
+    },
+    {
+      "id": "05i5fxqnu",
+      "name": "Logistica",
+      "description": "Logistica",
+      "budget": 50000,
+      "status": "active",
+      "createdAt": "2026-02-21T02:16:01.541Z"
+    }
+  ],
+  "insights": [
+    {
+      "areaId": 1,
+      "title": "Recomendación de Estrategia IA",
+      "content": "Como consultor experto del sistema **Dashboard Kioto**, he analizado el área de Ingeniería (Desarrollo de productos e I+D) con base en el presupuesto asignado de **$150,000**. \n\nA continuación, presento la recomendación estratégica para maximizar la eficiencia y potenciar el crecimiento corporativo:\n\n1.  **Priorización de Proyectos de Alto ROI (Enfoque en Crecimiento):**\n    Dado que el presupuesto es finito, se debe implementar una matriz de priorización dentro del Dashboard Kioto que clasifique los proyectos de I+D según su potencial de retorno de inversión y tiempo de salida al mercado (*Time-to-Market*). Se recomienda destinar el **70% del presupuesto a innovaciones incrementales** (mejoras de productos actuales con ingresos garantizados) y el **30% a innovación disruptiva**, asegurando que la ingeniería no sea solo un centro de costos, sino un motor de ventas.\n\n2.  **Optimización de Procesos mediante Metodologías Ágiles (Enfoque en Eficiencia):**\n    Para maximizar los $150,000, es imperativo reducir los tiempos de ciclo en el desarrollo de productos. Propongo integrar metodologías *Lean Engineering* o *Scrum* para eliminar desperdicios en la fase de prototipado. El objetivo es minimizar las iteraciones fallidas y los costos de rediseño, permitiendo que el presupuesto cubra un mayor número de hitos técnicos sin necesidad de ampliaciones financieras.\n\n3.  **Implementación de Indicadores de Desempeño (KPIs) en Tiempo Real:**\n    Bajo la filosofía del Dashboard Kioto, el área de Ingeniería debe monitorear tres métricas críticas: **Eficiencia del Gasto en R&D**, **Índice de Vitalidad (porcentaje de ventas proveniente de nuevos productos)** y **Cumplimiento del Cronograma de Lanzamiento**. Esto permitirá una visibilidad total sobre cómo cada dólar del presupuesto se traduce en activos intelectuales o productos comerciales, facilitando la toma de decisiones basada en datos y no en suposiciones técnicas.",
+      "id": "nne9kjszv",
+      "timestamp": "2026-02-21T00:46:54.890Z"
+    }
+  ],
+  "customTables": {},
+  "tableSchemas": [],
+  "whatsappMessages": [],
+  "messageRoutings": [],
+  "googleSheetUrl": "https://script.google.com/macros/s/AKfycbySj40qtOz8ZuG2HD2VIdr85nU-K8PwqRTiZHsxTCUA7Fp3tFF-z0G4zhHbQVPfdLc-/exec",
+  "lastSync": "2/26/2026, 6:00:07 PM",
+  "syncStatus": "success",
+  "lastError": null
+}
