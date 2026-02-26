@@ -1,0 +1,8 @@
+{
+  "name": "Dashboard Kioto",
+  "description": "Un dashboard empresarial avanzado con control de acceso, gestión de áreas dinámicas y motor de base de datos personalizable, potenciado por IA.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
