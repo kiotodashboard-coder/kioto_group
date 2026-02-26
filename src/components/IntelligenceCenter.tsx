@@ -1,17 +1,22 @@
 
 import React, { useState } from 'react';
-import { Area, AreaInsight } from '../types';
+import { Area, AreaInsight, User, UserRole } from '../types';
 import { generateAreaInsights } from '../services/geminiService';
 
 interface IntelligenceCenterProps {
   areas: Area[];
   onSaveInsight: (insight: Omit<AreaInsight, 'id' | 'timestamp'>) => void;
+  currentUser: User | null;
 }
 
-const IntelligenceCenter: React.FC<IntelligenceCenterProps> = ({ areas, onSaveInsight }) => {
+const IntelligenceCenter: React.FC<IntelligenceCenterProps> = ({ areas, onSaveInsight, currentUser }) => {
   const [selectedAreaId, setSelectedAreaId] = useState('');
   const [loading, setLoading] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
+
+  const filteredAreas = currentUser?.role === UserRole.SUPER_USER 
+    ? areas 
+    : areas.filter(a => a.id === currentUser?.assignedAreaId);
 
   const handleGenerate = async () => {
     if (!selectedAreaId) return;
@@ -54,7 +59,7 @@ const IntelligenceCenter: React.FC<IntelligenceCenterProps> = ({ areas, onSaveIn
               onChange={e => setSelectedAreaId(e.target.value)}
             >
               <option value="">Elige un área...</option>
-              {areas.map(a => (
+              {filteredAreas.map(a => (
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>

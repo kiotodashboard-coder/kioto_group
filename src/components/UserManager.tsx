@@ -8,10 +8,12 @@ interface UserManagerProps {
   areas: Area[];
   onAddUser: (user: Omit<User, 'id'>) => void;
   onDeleteUser: (id: string) => void;
+  onUpdateUser: (id: string, updates: Partial<User>) => void;
 }
 
-const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDeleteUser }) => {
+const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDeleteUser, onUpdateUser }) => {
   const [showModal, setShowModal] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ 
     name: '', 
     email: '', 
@@ -33,7 +35,15 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddUser(formData);
+    if (editingUserId) {
+      onUpdateUser(editingUserId, formData);
+    } else {
+      onAddUser(formData);
+    }
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFormData({ 
       name: '', 
       email: '', 
@@ -43,7 +53,22 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
       assignedAreaId: '',
       permissions: []
     });
+    setEditingUserId(null);
     setShowModal(false);
+  };
+
+  const handleEdit = (user: User) => {
+    setFormData({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      password: user.password || '',
+      role: user.role,
+      assignedAreaId: user.assignedAreaId || '',
+      permissions: user.permissions || []
+    });
+    setEditingUserId(user.id);
+    setShowModal(true);
   };
 
   return (
@@ -109,13 +134,22 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
                     )}
                   </td>
                   <td className="px-8 py-6 text-right">
-                    <button 
-                      disabled={user.role === UserRole.SUPER_USER && users.filter(u => u.role === UserRole.SUPER_USER).length === 1}
-                      onClick={() => onDeleteUser(user.id)}
-                      className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:text-[#d21f3c] hover:bg-red-50 rounded-xl transition-all disabled:opacity-10"
-                    >
-                      <i className="fas fa-trash-can text-sm"></i>
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button 
+                        onClick={() => handleEdit(user)}
+                        className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                        title="Editar Usuario"
+                      >
+                        <i className="fas fa-edit text-sm"></i>
+                      </button>
+                      <button 
+                        disabled={user.role === UserRole.SUPER_USER && users.filter(u => u.role === UserRole.SUPER_USER).length === 1}
+                        onClick={() => onDeleteUser(user.id)}
+                        className="w-10 h-10 flex items-center justify-center text-zinc-300 hover:text-[#d21f3c] hover:bg-red-50 rounded-xl transition-all disabled:opacity-10"
+                      >
+                        <i className="fas fa-trash-can text-sm"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -127,8 +161,12 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
       {showModal && (
         <div className="fixed inset-0 bg-zinc-500/10 backdrop-blur-xl flex items-center justify-center z-50 p-4 sm:p-6">
           <div className="bg-white rounded-[32px] sm:rounded-[48px] w-full max-w-xl p-6 sm:p-12 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border border-white/20 overflow-y-auto max-h-[90vh]">
-            <h3 className="text-3xl font-black text-zinc-900 mb-2 tracking-tighter uppercase">Provisión de Usuario</h3>
-            <p className="text-zinc-400 font-medium mb-10 text-sm">Registra una nueva identidad en el ecosistema.</p>
+            <h3 className="text-3xl font-black text-zinc-900 mb-2 tracking-tighter uppercase">
+              {editingUserId ? 'Modificar Usuario' : 'Provisión de Usuario'}
+            </h3>
+            <p className="text-zinc-400 font-medium mb-10 text-sm">
+              {editingUserId ? 'Actualiza los privilegios y datos de la identidad.' : 'Registra una nueva identidad en el ecosistema.'}
+            </p>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="md:col-span-2">
                 <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 ml-1">Nombre Completo <span className="text-[#d21f3c]">*</span></label>
@@ -220,7 +258,7 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
               <div className="md:col-span-2 flex gap-4 pt-10">
                 <button 
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={resetForm}
                   className="flex-1 px-8 py-5 border border-zinc-100 rounded-2xl font-black text-xs uppercase tracking-widest text-zinc-400 hover:bg-zinc-50 transition-all"
                 >
                   Cerrar
@@ -229,7 +267,7 @@ const UserManager: React.FC<UserManagerProps> = ({ users, areas, onAddUser, onDe
                   type="submit"
                   className="flex-1 px-8 py-5 bg-[#d21f3c] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#b01a32] transition-all shadow-xl shadow-[#d21f3c]/20"
                 >
-                  EJECUTAR ALTA
+                  {editingUserId ? 'GUARDAR CAMBIOS' : 'EJECUTAR ALTA'}
                 </button>
               </div>
             </form>

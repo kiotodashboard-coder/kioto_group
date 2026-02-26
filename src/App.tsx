@@ -141,10 +141,13 @@ const App: React.FC = () => {
 
     // Sincronización con el Servidor (Esto propaga a otros dispositivos)
     try {
+      // Usamos el ref para asegurarnos de enviar el estado más reciente
+      const fullState = { ...stateRef.current, ...newState };
+      
       const response = await fetch('/api/state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...state, ...newState })
+        body: JSON.stringify(fullState)
       });
       
       if (response.ok) {
@@ -190,25 +193,30 @@ const App: React.FC = () => {
     }
   };
 
+  const updateUser = (id: string, updates: Partial<User>) => {
+    const updatedUsers = state.users.map(u => u.id === id ? { ...u, ...updates } : u);
+    updateGlobalState({ users: updatedUsers });
+  };
+
   const addInsight = (insight: Omit<AreaInsight, 'id' | 'timestamp'>) => {
     const newInsight: AreaInsight = {
       ...insight,
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date().toISOString()
     };
-    setState(prev => ({ ...prev, insights: [...prev.insights, newInsight] }));
+    updateGlobalState({ insights: [...state.insights, newInsight] });
   };
 
   const addWAMessage = (msg: WhatsAppMessage) => {
-    setState(prev => ({ ...prev, whatsappMessages: [...prev.whatsappMessages, msg] }));
+    updateGlobalState({ whatsappMessages: [...state.whatsappMessages, msg] });
   };
 
   const clearWAMessages = () => {
-    setState(prev => ({ ...prev, whatsappMessages: [] }));
+    updateGlobalState({ whatsappMessages: [] });
   };
 
   const updateRoutings = (routings: MessageRouting[]) => {
-    setState(prev => ({ ...prev, messageRoutings: routings }));
+    updateGlobalState({ messageRoutings: routings });
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -365,7 +373,8 @@ const App: React.FC = () => {
                 users={state.users} 
                 areas={state.areas} 
                 onAddUser={addUser} 
-                onDeleteUser={deleteUser} 
+                onDeleteUser={deleteUser}
+                onUpdateUser={updateUser}
               />
             )}
 
@@ -429,6 +438,7 @@ const App: React.FC = () => {
               <IntelligenceCenter 
                 areas={state.areas} 
                 onSaveInsight={addInsight} 
+                currentUser={state.currentUser}
               />
             )}
           </div>

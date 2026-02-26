@@ -13,12 +13,12 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, currentUser, isOpen, onClose }) => {
   const menuItems = [
-    { id: 'overview', icon: 'fa-chart-pie', label: 'Resumen General', roles: [UserRole.SUPER_USER, UserRole.USER] },
+    { id: 'overview', icon: 'fa-chart-pie', label: 'Resumen General', roles: [UserRole.SUPER_USER] },
     { id: 'areas', icon: 'fa-layer-group', label: 'Gestión de Áreas', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.MANAGE_AREAS },
     { id: 'users', icon: 'fa-users-cog', label: 'Control de Usuarios', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.MANAGE_USERS },
     { id: 'db-master', icon: 'fa-database', label: 'Base de Datos', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.EDIT_DATABASE },
-    { id: 'whatsapp', icon: 'fa-brands fa-whatsapp', label: 'WhatsApp Bot', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.SEND_WHATSAPP },
-    { id: 'wa-router', icon: 'fa-route', label: 'Enrutamiento Bot', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.SEND_WHATSAPP },
+    { id: 'whatsapp', icon: 'fa-brands fa-whatsapp', label: 'WhatsApp Bot', roles: [UserRole.SUPER_USER] },
+    { id: 'wa-router', icon: 'fa-route', label: 'Enrutamiento Bot', roles: [UserRole.SUPER_USER] },
     { id: 'wa-messages', icon: 'fa-comments', label: 'Mensajes Recibidos', roles: [UserRole.SUPER_USER], permission: PERMISSIONS.SEND_WHATSAPP },
     { id: 'my-area', icon: 'fa-briefcase', label: 'Mi Departamento', roles: [UserRole.USER] },
     { id: 'ai-hub', icon: 'fa-brain', label: 'Inteligencia IA', roles: [UserRole.SUPER_USER, UserRole.USER], permission: PERMISSIONS.VIEW_INSIGHTS },

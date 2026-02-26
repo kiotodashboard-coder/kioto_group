@@ -184,15 +184,39 @@ apiRouter.get("/sync", async (req, res) => {
 });
 
 apiRouter.post("/state", async (req, res) => {
-  state = { ...state, ...req.body };
+  const newState = req.body;
+  state = { ...state, ...newState };
+  
+  // Persistencia local
   fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2));
-  if (MASTER_SHEET_URL) {
-    fetch(MASTER_SHEET_URL, {
+  
+  // Sincronización automática con Google Sheets (Cloud)
+  const targetSheetUrl = state.googleSheetUrl || MASTER_SHEET_URL;
+  
+  if (targetSheetUrl) {
+    addLog(`☁️ Sincronización automática disparada hacia: ${targetSheetUrl.substring(0, 40)}...`);
+    
+    // Ejecutamos en segundo plano para no bloquear la respuesta al cliente
+    fetch(targetSheetUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...state, exportedAt: new Date().toISOString() })
-    }).catch(() => {});
+      body: JSON.stringify({ 
+        ...state, 
+        exportedAt: new Date().toISOString(),
+        syncSource: 'automatic_trigger'
+      })
+    }).then(async (sheetRes) => {
+      if (sheetRes.ok) {
+        addLog("✅ Cloud Sync exitoso (Auto)");
+      } else {
+        const errText = await sheetRes.text();
+        addLog(`⚠️ Cloud Sync falló (Auto): ${sheetRes.status} - ${errText.substring(0, 100)}`);
+      }
+    }).catch((err) => {
+      addLog(`❌ Error de red en Cloud Sync (Auto): ${err.message}`);
+    });
   }
+  
   res.json({ success: true, lastSync: new Date().toLocaleString() });
 });
 
