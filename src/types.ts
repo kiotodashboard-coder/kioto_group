@@ -33,10 +33,17 @@ export interface AreaInsight {
   timestamp: string;
 }
 
+export interface FieldDefinition {
+  name: string;
+  type: 'text' | 'number' | 'date' | 'currency';
+}
+
 export interface TableSchema {
   id: string;
   name: string;
   fields: string[];
+  fieldDefinitions?: FieldDefinition[];
+  lastAutoId?: number;
 }
 
 export interface WhatsAppMessage {
